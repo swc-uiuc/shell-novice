@@ -7,19 +7,19 @@ questions:
 - "How can I find things in files?"
 objectives:
 - "Use `grep` to select lines from text files that match simple patterns."
-- "Use `find` to find files whose names match simple patterns."
+- "Use `find` to find files and directories whose names match simple patterns."
 - "Use the output of one command as the command-line argument(s) to another command."
 - "Explain what is meant by 'text' and 'binary' files, and why many common tools don't handle the latter well."
 keypoints:
 - "`find` finds files with specific properties that match patterns."
 - "`grep` selects lines in files that match patterns."
-- "`--help` is a flag supported by many bash commands, and programs that can be run from within Bash, to display more information on how to use these commands or programs."
+- "`--help` is an option supported by many bash commands, and programs that can be run from within Bash, to display more information on how to use these commands or programs."
 - "`man command` displays the manual page for a given command."
 - "`$(command)` inserts a command's output in place."
 ---
 
-In the same way that many of us now use "Google" as a 
-verb meaning "to find", Unix programmers often use the 
+In the same way that many of us now use "Google" as a
+verb meaning "to find", Unix programmers often use the
 word "grep".
 "grep" is a contraction of "global/regular expression/print",
 a common sequence of operations in early Unix text editors.
@@ -56,7 +56,7 @@ Software is like that.
 > ## Forever, or Five Years
 >
 > We haven't linked to the original haikus because they don't appear to be on *Salon*'s site any longer.
-> As [Jeff Rothenberg said](http://www.clir.org/pubs/archives/ensuring.pdf),
+> As [Jeff Rothenberg said](https://www.clir.org/wp-content/uploads/sites/6/ensuring.pdf),
 > "Digital information lasts forever --- or five years, whichever comes first."
 > Luckily, popular content often [has backups](http://wiki.c2.com/?ComputerErrorHaiku).
 {: .callout}
@@ -79,7 +79,9 @@ Here, `not` is the pattern we're searching for. The grep command searches throug
 
 The output is the three lines in the file that contain the letters "not".
 
-Let's try a different pattern: "The".
+By default, grep searches for a pattern in a case-sensitive way. In addition, the search pattern we have selected does not have to form a complete word, as we will see in the next example.
+
+Let's search for the pattern: "The".
 
 ~~~
 $ grep The haiku.txt
@@ -92,14 +94,14 @@ The Tao that is seen
 ~~~
 {: .output}
 
-This time,
-two lines that include the letters "The" are outputted.
-However, one instance of those letters is contained within a larger word,
-"Thesis".
+This time, two lines that include the letters "The" are outputted,
+one of which contained our search pattern within a larger word, "Thesis".
 
 To restrict matches to lines containing the word "The" on its own,
-we can give `grep` with the `-w` flag.
+we can give `grep` with the `-w` option.
 This will limit matches to word boundaries.
+
+Later in this lesson, we will also see how we can change the search behavior of grep with respect to its case sensitivity.
 
 ~~~
 $ grep -w The haiku.txt
@@ -112,7 +114,7 @@ The Tao that is seen
 {: .output}
 
 Note that a "word boundary" includes the start and end of a line, so not
-just letters surrounded by spaces. 
+just letters surrounded by spaces.
 Sometimes we don't
 want to search for a single word, but a phrase. This is also easy to do with
 `grep` by putting the phrase in quotes.
@@ -244,8 +246,8 @@ Miscellaneous:
 > 4. `grep -i "of" haiku.txt`
 >
 > > ## Solution
-> > The correct answer is 3, because the `-w` flag looks only for whole-word matches.
-> > The other options will all match "of" when part of another word.
+> > The correct answer is 3, because the `-w` option looks only for whole-word matches.
+> > The other options will also match "of" when part of another word.
 > {: .solution}
 {: .challenge}
 
@@ -271,7 +273,7 @@ Miscellaneous:
 > ~~~
 > {: .output}
 >
-> We use the `-E` flag and put the pattern in quotes to prevent the shell
+> We use the `-E` option and put the pattern in quotes to prevent the shell
 > from trying to interpret it. (If the pattern contained a `*`, for
 > example, the shell would try to expand it before running `grep`.) The
 > `^` in the pattern anchors the match to the start of the line. The `.`
@@ -280,10 +282,10 @@ Miscellaneous:
 {: .callout}
 
 > ## Tracking a Species
-> 
-> Leah has several hundred 
+>
+> Leah has several hundred
 > data files saved in one directory, each of which is formatted like this:
-> 
+>
 > ~~~
 > 2013-11-05,deer,5
 > 2013-11-05,rabbit,22
@@ -293,11 +295,11 @@ Miscellaneous:
 > ~~~
 > {: .source}
 >
-> She wants to write a shell script that takes a species as the first command-line argument 
-> and a directory as the second argument. The script should return one file called `species.txt` 
+> She wants to write a shell script that takes a species as the first command-line argument
+> and a directory as the second argument. The script should return one file called `species.txt`
 > containing a list of dates and the number of that species seen on each date.
-> For example using the data shown above, `rabbits.txt` would contain:
-> 
+> For example using the data shown above, `rabbit.txt` would contain:
+>
 > ~~~
 > 2013-11-05,22
 > 2013-11-06,19
@@ -305,15 +307,15 @@ Miscellaneous:
 > {: .source}
 >
 > Put these commands and pipes in the right order to achieve this:
-> 
+>
 > ~~~
-> cut -d : -f 2  
-> >  
-> |  
-> grep -w $1 -r $2  
-> |  
-> $1.txt  
-> cut -d , -f 1,3  
+> cut -d : -f 2
+> >
+> |
+> grep -w $1 -r $2
+> |
+> $1.txt
+> cut -d , -f 1,3
 > ~~~
 > {: .language-bash}
 >
@@ -379,6 +381,11 @@ Miscellaneous:
 > > This solution is inferior because `grep -c` only reports the number of lines matched.
 > > The total number of matches reported by this method will be lower if there is more
 > > than one match per line.
+> >
+> > Perceptive observers may have noticed that character names sometimes appear in all-uppercase
+> > in chapter titles (e.g. "MEG GOES TO VANITY FAIR").
+> > If you wanted to count these as well, you could add the `-i` option for case-insensitivity
+> > (though in this case, it doesn't affect the answer to which sister is mentioned most frequently).
 > {: .solution}
 {: .challenge}
 
@@ -397,7 +404,7 @@ and a `tools` directory that contains the programs `format` and `stats`,
 and a subdirectory called `old`, with a file `oldtool`.
 
 For our first command,
-let's run `find .`.
+let's run `find .` (remember to run this command from the `data-shell/writing` folder).
 
 ~~~
 $ find .
@@ -427,13 +434,13 @@ which is where we want our search to start.
 `find`'s output is the names of every file **and** directory
 under the current working directory.
 This can seem useless at first but `find` has many options
-to filter the output and in this lesson we will discover some 
+to filter the output and in this lesson we will discover some
 of them.
 
 The first option in our list is
 `-type d` that means "things that are directories".
 Sure enough,
-`find`'s output is the names of the six directories in our little tree
+`find`'s output is the names of the five directories in our little tree
 (including `.`):
 
 ~~~
@@ -580,7 +587,7 @@ $ grep "FE" $(find .. -name '*.pdb')
 
 > ## Matching and Subtracting
 >
-> The `-v` flag to `grep` inverts pattern matching, so that only lines
+> The `-v` option to `grep` inverts pattern matching, so that only lines
 > which do *not* match the pattern are printed. Given that, which of
 > the following commands will find all files in `/data` whose names
 > end in `s.txt` (e.g., `animals.txt` or `planets.txt`), but do
@@ -607,23 +614,19 @@ $ grep "FE" $(find .. -name '*.pdb')
 
 > ## Binary Files
 >
-> We have focused exclusively on finding things in text files. What if
+> We have focused exclusively on finding patterns in text files. What if
 > your data is stored as images, in databases, or in some other format?
-> One option would be to extend tools like `grep` to handle those formats.
-> This hasn't happened, and probably won't, because there are too many
-> formats to support.
 >
-> The second option is to convert the data to text, or extract the
-> text-ish bits from the data. This is probably the most common approach,
-> since it only requires people to build one tool per data format (to
-> extract information). On the one hand, it makes simple things easy to
-> do. On the negative side, complex things are usually impossible. For
+> A handful of tools extend `grep` to handle a few non text formats. But a
+> more generalizable approach is to convert the data to text, or
+> extract the text-like elements from the data. On the one hand, it makes simple
+> things easy to do. On the other hand, complex things are usually impossible. For
 > example, it's easy enough to write a program that will extract X and Y
 > dimensions from image files for `grep` to play with, but how would you
 > write something to find values in a spreadsheet whose cells contained
 > formulas?
 >
-> The third choice is to recognize that the shell and text processing have
+> A last option is to recognize that the shell and text processing have
 > their limits, and to use another programming language.
 > When the time comes to do this, don't be too hard on the shell: many
 > modern programming languages have borrowed a lot of
@@ -651,19 +654,19 @@ about them."
 > {: .language-bash}
 >
 > > ## Solution
-> > 1. Find all files with a `.dat` extension in the current directory
+> > 1. Find all files with a `.dat` extension recursively from the current directory
 > > 2. Count the number of lines each of these files contains
 > > 3. Sort the output from step 2. numerically
 > {: .solution}
 {: .challenge}
 
 > ## Finding Files With Different Properties
-> 
+>
 > The `find` command can be given several other criteria known as "tests"
 > to locate files with specific attributes, such as creation time, size,
 > permissions, or ownership.  Use `man find` to explore these, and then
 > write a single command to find all files in or below the current directory
-> that were modified by the user `ahmed` in the last 24 hours.
+> that are owned by the user `ahmed` and were modified in the last 24 hours.
 >
 > Hint 1: you will need to use three tests: `-type`, `-mtime`, and `-user`.
 >
